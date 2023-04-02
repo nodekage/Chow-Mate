@@ -63,20 +63,35 @@ async function generateResponse(message, sessionId) {
          order3Result
         );
         break;
+      case '4': 
+        let order4Result = '';
+        order4Result = await order4(message, sessionId);
+        resolve('MilkShake added to cart, press 1 to go back to menu.,' ,
+        order4Result 
+        );
+        break;
+        case '5':
+            let order5Result = '';
+            order5Result = await order5(message, sessionId);
+            resolve('French Fries added to cart, press 1 to go back to menu.',
+            order5Result
+           );
+           break;
         case '99':
         let order99Result = await order99(sessionId);
          resolve(`${order99Result}`);
         break;
       case '98':
-        let order98Result = await order98(sessionId);
+        let order98Result = await order98(message, sessionId);
          resolve(`${order98Result}`);
         break;
       case '97':
-        let order97Result = await order97(sessionId);
+        let order97Result = await order97(message, sessionId);
          resolve(`${order97Result}`);
         break;
       case '0':
-        resolve('Order cancelled!'); // add logic to handle cancelling orders
+        let order0Result = await order0(message, sessionId)
+        resolve(`${order0Result}`); // add logic to handle cancelling orders
         break;
       default:
         resolve("I'm sorry, I didn't understand that. Please select one of the options.");
@@ -118,7 +133,7 @@ async function order2(message, sessionId) {
     const data = await response.json();
   
     console.log(data);
-  }
+}
 
 
 
@@ -138,7 +153,48 @@ async function order3(message, sessionId) {
     const data = await response.json();
   
     console.log(data);
-  }
+}
+
+
+
+
+// ORDER 4 FUNCTION 'MilkShake : $3.50'
+
+async function order4(message, sessionId) {
+    const response = await fetch('http://localhost:5500/api/chatbot/order4', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'sessionId': sessionId, // Include session ID in headers
+      },
+      body: JSON.stringify({ message: "MilkShake : $3.50" }),
+      credentials: 'include', // Include cookies in the request
+    });
+    const data = await response.json();
+  
+    console.log(data);
+}
+
+
+
+// ORDER 5 FUNCTION 'FrenchFries : $4.99'
+
+async function order5(message, sessionId) {
+    const response = await fetch('http://localhost:5500/api/chatbot/order5', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'sessionId': sessionId, // Include session ID in headers
+      },
+      body: JSON.stringify({ message: "FrenchFries : $4.99" }),
+      credentials: 'include', // Include cookies in the request
+    });
+    const data = await response.json();
+  
+    console.log(data);
+}
+
+
 
   
 // ORDER 99 FUNCTION 'PLACE ORDER'
@@ -155,13 +211,14 @@ async function order99(sessionId) {
     });
     const data = await response.json();
     return data;
-  }
+}
   
 
   
 // ORDER 98 FUNCTION 'ORDER HISTORY'
 
 async function order98(message, sessionId) {
+    console.log('sessionId:', sessionId);
     const response = await fetch('http://localhost:5500/api/chatbot/order98', {
       method: 'POST',
       headers: {
@@ -174,7 +231,7 @@ async function order98(message, sessionId) {
     const data = await response.json();
     return data;
   
-  }
+}
 
 
 // ORDER 97 FUNCTION 'SEE ORDER'
@@ -190,9 +247,28 @@ async function order97(message, sessionId) {
       credentials: 'include', // Include cookies in the request
     });
     const data = await response.json();
-  
     console.log(data);
-  }
+    return data;
+}
+
+
+// ORDER 0 FUNCTION 'CANCEL ORDER'
+
+async function order0(message, sessionId) {
+    const response = await fetch('http://localhost:5500/api/chatbot/order0', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'sessionId': sessionId, // Include session ID in headers
+      },
+      body: JSON.stringify({ message: "BreakfastBurrito : $14.99" }),
+      credentials: 'include', // Include cookies in the request
+    });
+    const data = await response.json();
+    console.log(data);
+    return data;
+}
+
 
 
 
@@ -207,11 +283,11 @@ async function order97(message, sessionId) {
 function getSessionId() {
     let sessionId = localStorage.getItem('sessionId');
     if (!sessionId) {
-      sessionId = "0123456789"; // generate a new session ID if it doesn't exist
+      sessionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15); // generate a new session ID if it doesn't exist
       localStorage.setItem('sessionId', sessionId); // store the new session ID in local storage
     }
     return sessionId;
     
-  }
+}
   
  
